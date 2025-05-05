@@ -6,9 +6,7 @@ definePageMeta({
 
 <template>
   <div>
-    <h1>ホームページへようこそ</h1>
-    <p>ここがメインコンテンツです。</p>
-    <!-- 必要に応じてコンポーネントを追加 -->
+    <PokemonList />
   </div>
 </template>
 
