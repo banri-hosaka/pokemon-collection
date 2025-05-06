@@ -2,8 +2,8 @@
   <div>
     <header>
       <nav>
-        <NuxtLink to="/">ホーム</NuxtLink>
-        <NuxtLink to="/about">アバウト</NuxtLink>
+        <!-- <NuxtLink to="/">ホーム</NuxtLink> -->
+        <!-- <NuxtLink to="/about">アバウト</NuxtLink> -->
       </nav>
     </header>
     <main>

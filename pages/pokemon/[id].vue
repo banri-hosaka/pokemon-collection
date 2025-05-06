@@ -1,6 +1,6 @@
 <template>
   <div v-if="pokemon" class="pokemon-detail">
-    <div class="back-button" @click="router.back()">← 戻る</div>
+    <div class="back-button" @click="router.back()">戻る</div>
 
     <div class="pokemon-header">
       <div class="pokemon-image">
@@ -95,9 +95,9 @@
 
         <div class="form-group checkbox">
           <input
-            type="checkbox"
             id="favorite"
             v-model="collectionData.isFavorite"
+            type="checkbox"
           />
           <label for="favorite">お気に入りに登録</label>
         </div>
@@ -118,7 +118,7 @@
       </div>
     </div>
 
-    <div class="status-message" :class="messageType" v-if="statusMessage">
+    <div v-if="statusMessage" class="status-message" :class="messageType">
       {{ statusMessage }}
     </div>
   </div>

@@ -1,6 +1,6 @@
 <template>
   <div class="pokemon-list">
-    <h2>ポケモン図鑑</h2>
+    <h1>ポケモン図鑑</h1>
     <div class="search-container">
       <input
         v-model="searchQuery"
@@ -193,7 +193,7 @@ function translateType(type) {
 .pokemon-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+  gap: 5px;
 }
 
 .pokemon-card {
