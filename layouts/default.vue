@@ -1,9 +1,10 @@
 <template>
   <div>
     <header>
-      <nav>
-        <!-- <NuxtLink to="/">ホーム</NuxtLink> -->
-        <!-- <NuxtLink to="/about">アバウト</NuxtLink> -->
+      <nav class="navigation">
+        <NuxtLink to="/" class="nav-button">ポケモン図鑑</NuxtLink>
+        <NuxtLink to="debug" class="nav-button">デバッグデモ</NuxtLink>
+        <!-- <NuxtLink to="/about" class="nav-button">アバウト</NuxtLink> -->
       </nav>
     </header>
     <main>
@@ -15,3 +16,27 @@
     </footer>
   </div>
 </template>
+
+<style scoped>
+.navigation {
+  display: flex;
+  justify-content: left;
+  gap: 10px;
+  padding: 15px;
+}
+
+.nav-button {
+  display: inline-block;
+  background: #19eace;
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 4px;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.nav-button:hover {
+  background: #16cbb3;
+}
+</style>
