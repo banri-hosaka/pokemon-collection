@@ -4,6 +4,7 @@
       <nav class="navigation">
         <NuxtLink to="/" class="nav-button">ポケモン図鑑</NuxtLink>
         <NuxtLink to="debug" class="nav-button">デバッグデモ</NuxtLink>
+        <NuxtLink to="button" class="nav-button">Figmaサンプル</NuxtLink>
         <!-- <NuxtLink to="/about" class="nav-button">アバウト</NuxtLink> -->
       </nav>
     </header>
