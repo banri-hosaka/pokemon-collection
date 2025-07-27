@@ -1,6 +1,6 @@
 # ポケモンコレクション
 
-ポケモンのコレクション管理アプリケーション。Nuxt 3 + Prisma + MySQLで構築。
+ポケモンのコレクション管理アプリケーション。Nuxt 3 + Prisma + MySQL で構築。
 
 ## セットアップ
 
@@ -20,7 +20,7 @@ yarn dev
 
 ## データベース管理
 
-### Prismaコマンド
+### Prisma コマンド
 
 ```bash
 # Prismaクライアントを生成
@@ -51,7 +51,7 @@ npx tsx scripts/check-pokemon-data.ts
 
 ## テスト実行
 
-### APIパフォーマンステスト
+### API パフォーマンステスト
 
 ```bash
 # 開発サーバーを起動した状態で実行
@@ -89,7 +89,7 @@ yarn preview
 
 ## コード品質
 
-ESLintでコードをチェック:
+ESLint でコードをチェック:
 
 ```bash
 yarn lint
@@ -116,8 +116,8 @@ pokemon-collection/
 
 ## 開発メモ
 
-- ポケモンデータはPrismaでキャッシュし、PokeAPIへの依存を削減
+- ポケモンデータは Prisma でキャッシュし、PokeAPI への依存を削減
 - 開発時は`yarn dev`でホットリロードが有効
-- Vercelへのデプロイ設定済み（vercel.json）
+- Vercel へのデプロイ設定済み（vercel.json）
 
-詳細な仕様は[Nuxtドキュメント](https://nuxt.com/docs/getting-started/introduction)を参照。
+詳細な仕様は[Nuxt ドキュメント](https://nuxt.com/docs/getting-started/introduction)を参照。

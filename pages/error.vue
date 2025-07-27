@@ -11,8 +11,11 @@
 
 <script setup>
 // プロパティとして自動的にエラー情報が提供される
-const props = defineProps({
-  error: Object,
+defineProps({
+  error: {
+    type: Object,
+    default: () => ({ statusCode: 500, message: '不明なエラー' })
+  },
 });
 
 // クリアハンドラ - エラーをクリアして指定されたパスに移動

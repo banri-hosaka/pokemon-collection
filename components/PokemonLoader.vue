@@ -13,7 +13,6 @@ const pokemons = [
 ];
 
 const randomPokemon = ref(pokemons[0]);
-const isLoading = ref(true);
 
 onMounted(() => {
   // ランダムなポケモンを選択

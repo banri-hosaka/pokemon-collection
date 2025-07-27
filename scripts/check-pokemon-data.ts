@@ -31,7 +31,7 @@ async function main() {
   
   console.log('\n🔍 サンプルデータ:')
   samplePokemons.forEach((pokemon) => {
-    const types = pokemon.types as any[]
+    const types = pokemon.types as { type: { name: string } }[]
     const typeNames = types.map(t => t.type.name).join('/')
     console.log(`  ${pokemon.id}: ${pokemon.japaneseName} (${pokemon.name}) - タイプ: ${typeNames}`)
   })
