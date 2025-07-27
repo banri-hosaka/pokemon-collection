@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
       });
 
       return updatedEntry;
-    } catch (error) {
+    } catch (_error) {
       throw createError({
         statusCode: 500,
         message: "更新中にエラーが発生しました",
@@ -51,7 +51,7 @@ export default defineEventHandler(async (event) => {
 
       setResponseStatus(event, 204);
       return null;
-    } catch (error) {
+    } catch (_error) {
       throw createError({
         statusCode: 500,
         message: "削除中にエラーが発生しました",

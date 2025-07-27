@@ -11,16 +11,18 @@ async function testApiPerformance() {
 
   for (const testCase of testCases) {
     console.log(`📍 テスト: ${testCase.description}`);
-    
+
     const startTime = Date.now();
-    
+
     try {
-      const response = await fetch(`http://localhost:3000/api/pokemon/${testCase.id}`);
+      const response = await fetch(
+        `http://localhost:3000/api/pokemon/${testCase.id}`
+      );
       const data = await response.json();
-      
+
       const endTime = Date.now();
       const responseTime = endTime - startTime;
-      
+
       console.log(`   ID: ${data.id}`);
       console.log(`   名前: ${data.japaneseName} (${data.name})`);
       console.log(`   レスポンス時間: ${responseTime}ms`);
@@ -30,7 +32,7 @@ async function testApiPerformance() {
       console.error(`   エラー: ${error}`);
     }
   }
-  
+
   console.log("✅ テスト完了");
 }
 

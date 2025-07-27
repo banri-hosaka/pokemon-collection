@@ -14,7 +14,7 @@ function getGeneration(pokemonId: number): number {
     8: { start: 810, end: 905 },
     9: { start: 906, end: 1025 },
   };
-  
+
   for (const [gen, range] of Object.entries(GENERATION_RANGES)) {
     if (pokemonId >= range.start && pokemonId <= range.end) {
       return parseInt(gen);
@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
 
     if (cachedPokemon) {
       console.log(`[Cache Hit] ポケモンID ${pokemonId} をDBから取得`);
-      
+
       // DBのデータをAPIレスポンス形式に変換
       return {
         id: cachedPokemon.id,
@@ -60,7 +60,7 @@ export default defineEventHandler(async (event) => {
 
     // DBにない場合はPokeAPIから取得
     console.log(`[Cache Miss] ポケモンID ${pokemonId} をPokeAPIから取得`);
-    
+
     // 基本情報の取得
     const pokemonResponse = await fetch(
       `https://pokeapi.co/api/v2/pokemon/${pokemonId}`
@@ -93,23 +93,26 @@ export default defineEventHandler(async (event) => {
     }
 
     // 取得したデータをDBに保存（非同期で実行）
-    prisma.pokemon.create({
-      data: {
-        id: pokemon.id,
-        name: pokemon.name,
-        japaneseName,
-        height: pokemon.height,
-        weight: pokemon.weight,
-        types: pokemon.types,
-        stats: pokemon.stats,
-        spriteUrl: pokemon.sprites.front_default || "",
-        generation: getGeneration(pokemon.id),
-      },
-    }).then(() => {
-      console.log(`✅ ポケモンID ${pokemon.id} をDBに保存しました`);
-    }).catch((error) => {
-      console.error(`❌ ポケモンID ${pokemon.id} の保存に失敗:`, error);
-    });
+    prisma.pokemon
+      .create({
+        data: {
+          id: pokemon.id,
+          name: pokemon.name,
+          japaneseName,
+          height: pokemon.height,
+          weight: pokemon.weight,
+          types: pokemon.types,
+          stats: pokemon.stats,
+          spriteUrl: pokemon.sprites.front_default || "",
+          generation: getGeneration(pokemon.id),
+        },
+      })
+      .then(() => {
+        console.log(`✅ ポケモンID ${pokemon.id} をDBに保存しました`);
+      })
+      .catch((error) => {
+        console.error(`❌ ポケモンID ${pokemon.id} の保存に失敗:`, error);
+      });
 
     return {
       id: pokemon.id,

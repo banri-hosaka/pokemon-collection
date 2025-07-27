@@ -7,6 +7,12 @@ export default withNuxt(
     rules: {
       // VSCodeのフォーマッタと競合するため無効化
       "vue/html-self-closing": "off",
+      // アンダースコアで始まる変数は未使用でもOK
+      "@typescript-eslint/no-unused-vars": ["error", {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_"
+      }]
     },
   }
 );
