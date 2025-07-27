@@ -1,6 +1,6 @@
 # ポケモンコレクション
 
-ポケモンのコレクション管理アプリケーション。Nuxt 3 + Prisma + MySQL で構築。
+ポケモンのコレクション管理アプリケーション。Nuxt 3 + Prisma + PostgreSQL で構築。
 
 ## セットアップ
 
@@ -114,10 +114,51 @@ pokemon-collection/
     └── SOW_*.md        # 機能別仕様書
 ```
 
+## データベース構成
+
+### Vercel Storage (Prisma Postgres)
+
+本プロジェクトでは、Vercel Storage の Prisma Postgres を使用しています。
+
+#### 環境変数の設定
+
+```bash
+# .env ファイル
+DATABASE_URL="postgres://username:password@db.prisma.io:5432/?sslmode=require"
+```
+
+#### Vercel での設定手順
+
+1. **Vercel Storage でデータベース作成**
+   - Vercelプロジェクトの「Storage」タブ
+   - 「Create Database」→「Postgres」を選択
+   - データベース名とリージョンを設定
+
+2. **環境変数の自動設定**
+   - Vercel Storage 作成時に `DATABASE_URL` が自動設定される
+   - 本番・プレビュー・開発環境すべてに適用
+
+3. **ローカル開発での接続**
+   - Vercel Storage の接続文字列を `.env` ファイルにコピー
+   - `npx prisma db push` でスキーマを同期
+
+#### データベース移行履歴
+
+- **v1.0**: MySQL (ローカル環境)
+- **v2.0**: PostgreSQL (Vercel Storage/Prisma Postgres) ← 現行
+
+### 無料プランの制限
+
+- **ストレージ**: 512MB まで
+- **月間リクエスト**: 300万リクエスト
+- **同時接続数**: 60接続
+- **データ転送**: 5GB/月
+
 ## 開発メモ
 
 - ポケモンデータは Prisma でキャッシュし、PokeAPI への依存を削減
 - 開発時は`yarn dev`でホットリロードが有効
-- Vercel へのデプロイ設定済み（vercel.json）
+- Vercel Storage (Prisma Postgres) で本番運用
+- ESLint でコード品質を維持（self-closingルールは無効化）
 
 詳細な仕様は[Nuxt ドキュメント](https://nuxt.com/docs/getting-started/introduction)を参照。
