@@ -16,6 +16,23 @@ model User {
   updatedAt      DateTime         @updatedAt
 }
 
+model Pokemon {
+  id           Int              @id
+  name         String           @unique
+  japaneseName String
+  height       Int
+  weight       Int
+  types        Json             // [{"slot": 1, "type": {"name": "grass"}}]
+  stats        Json             // [{"base_stat": 45, "stat": {"name": "hp"}}]
+  spriteUrl    String           @db.Text
+  generation   Int
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  
+  @@index([generation])
+  @@index([name])
+}
+
 model PokemonCollection {
   id             Int              @id @default(autoincrement())
   pokemonId      Int              
