@@ -1,13 +1,11 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div>
     <!-- ポケモンローダー -->
     <PokemonLoader :loading="isLoading" />
     
-    <div class="font-sans antialiased">
-      <NuxtLayout>
-        <NuxtPage />
-      </NuxtLayout>
-    </div>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
   </div>
 </template>
 
@@ -38,19 +36,19 @@ if (import.meta.client) {
 </script>
 
 <style>
-@import '@unocss/reset/tailwind.css';
-
 /* ページ遷移アニメーション */
 .page-enter-active,
 .page-leave-active {
-  @apply transition-all duration-300;
+  transition: all 0.3s ease;
 }
 
 .page-enter-from {
-  @apply opacity-0 scale-90 translate-y-5;
+  opacity: 0;
+  transform: scale(0.9) translateY(20px);
 }
 
 .page-leave-to {
-  @apply opacity-0 translate-y-2;
+  opacity: 0;
+  transform: translateY(10px);
 }
 </style>

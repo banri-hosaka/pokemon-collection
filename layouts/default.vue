@@ -1,51 +1,56 @@
 <template>
-  <div class="min-h-screen flex flex-col">
-    <!-- ヘッダー -->
-    <header class="bg-white shadow-sm border-b border-gray-200">
-      <UContainer>
-        <nav class="flex items-center gap-4 py-4">
-          <UButton 
-            to="/" 
-            variant="solid"
-            color="primary"
-            size="md"
-          >
-            ポケモン図鑑
-          </UButton>
-          <UButton 
-            to="/debug" 
-            variant="ghost"
-            color="gray"
-            size="md"
-          >
-            デバッグデモ
-          </UButton>
-          <UButton 
-            to="/button" 
-            variant="ghost"
-            color="gray"
-            size="md"
-          >
-            Figmaサンプル
-          </UButton>
-        </nav>
-      </UContainer>
+  <div>
+    <header>
+      <nav class="navigation">
+        <NuxtLink to="/" class="nav-button">ポケモン図鑑</NuxtLink>
+        <NuxtLink to="/debug" class="nav-button">デバッグデモ</NuxtLink>
+        <NuxtLink to="/button" class="nav-button">Figmaサンプル</NuxtLink>
+      </nav>
     </header>
-    
-    <!-- メインコンテンツ -->
-    <main class="flex-1">
-      <UContainer class="py-8">
-        <slot />
-      </UContainer>
+    <main>
+      <slot />
     </main>
-    
-    <!-- フッター -->
-    <footer class="bg-gray-100 border-t border-gray-200">
-      <UContainer>
-        <div class="py-4 text-center text-sm text-gray-600">
-          © 2025 pokemon-collection
-        </div>
-      </UContainer>
+    <footer>
+      <p>© 2025 pokemon-collection</p>
     </footer>
   </div>
 </template>
+
+<style scoped>
+.navigation {
+  display: flex;
+  justify-content: left;
+  gap: 10px;
+  padding: 15px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #ddd;
+}
+
+.nav-button {
+  display: inline-block;
+  background: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 4px;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.nav-button:hover {
+  background: #45a049;
+}
+
+main {
+  min-height: calc(100vh - 120px);
+  padding: 20px;
+}
+
+footer {
+  background-color: #f8f8f8;
+  border-top: 1px solid #ddd;
+  padding: 15px;
+  text-align: center;
+  color: #666;
+}
+</style>
