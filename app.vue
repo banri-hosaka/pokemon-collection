@@ -1,12 +1,13 @@
 <template>
-  <div>
+  <div class="min-h-screen bg-gray-50">
     <!-- ポケモンローダー -->
     <PokemonLoader :loading="isLoading" />
-  </div>
-  <div>
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
+    
+    <div class="font-sans antialiased">
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
+    </div>
   </div>
 </template>
 
@@ -37,33 +38,19 @@ if (import.meta.client) {
 </script>
 
 <style>
-/* グローバルCSS */
-html {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  margin: 5px;
-  padding: 5px;
-  background-color: #fafafa;
-}
+@import '@unocss/reset/tailwind.css';
 
 /* ページ遷移アニメーション */
 .page-enter-active,
 .page-leave-active {
-  transition: opacity 0.3s, transform 0.3s;
+  @apply transition-all duration-300;
 }
 
 .page-enter-from {
-  opacity: 0;
-  transform: scale(0.9) translateY(20px);
+  @apply opacity-0 scale-90 translate-y-5;
 }
 
 .page-leave-to {
-  opacity: 0;
-  transform: translateY(10px);
+  @apply opacity-0 translate-y-2;
 }
 </style>

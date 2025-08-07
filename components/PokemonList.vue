@@ -1,35 +1,67 @@
 <template>
-  <div class="pokemon-list">
-    <h1>ポケモン図鑑</h1>
-    <div class="search-container">
-      <input
+  <div>
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">ポケモン図鑑</h1>
+    
+    <!-- 検索バー -->
+    <div class="mb-8">
+      <UInput
         v-model="searchQuery"
-        type="text"
         placeholder="ポケモン名で検索..."
+        icon="i-heroicons-magnifying-glass-20-solid"
+        size="lg"
+        :ui="{ 
+          wrapper: 'w-full',
+          base: 'w-full'
+        }"
       />
     </div>
-    <div class="pokemon-grid">
-      <div
+    
+    <!-- ポケモングリッド -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <UCard
         v-for="pokemon in displayedPokemons"
         :key="pokemon.id"
-        class="pokemon-card"
+        class="cursor-pointer hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
         @click="navigateToPokemon(pokemon.id)"
+        :ui="{
+          body: {
+            padding: 'p-4'
+          }
+        }"
       >
-        <img :src="pokemon.sprites.front_default" :alt="pokemon.japaneseName" />
-        <div class="pokemon-info">
-          <h3>{{ pokemon.japaneseName }}</h3>
-          <p>No.{{ pokemon.id.toString().padStart(3, "0") }}</p>
-          <div class="pokemon-types">
-            <span
-              v-for="type in pokemon.types"
-              :key="type.slot"
-              :class="'type-' + type.type.name"
-            >
-              {{ translateType(type.type.name) }}
-            </span>
+        <template #default>
+          <div class="text-center">
+            <img 
+              :src="pokemon.sprites.front_default" 
+              :alt="pokemon.japaneseName"
+              class="w-24 h-24 mx-auto mb-2"
+            />
+            <h3 class="font-semibold text-gray-800 mb-1">
+              {{ pokemon.japaneseName }}
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">
+              No.{{ pokemon.id.toString().padStart(3, "0") }}
+            </p>
+            <div class="flex justify-center gap-1 flex-wrap">
+              <UBadge
+                v-for="type in pokemon.types"
+                :key="type.slot"
+                :color="getTypeColor(type.type.name)"
+                variant="solid"
+                size="xs"
+                class="text-white"
+              >
+                {{ translateType(type.type.name) }}
+              </UBadge>
+            </div>
           </div>
-        </div>
-      </div>
+        </template>
+      </UCard>
+    </div>
+    
+    <!-- ローディングインジケーター -->
+    <div v-if="loading" class="flex justify-center mt-8">
+      <UIcon name="i-heroicons-arrow-path-20-solid" class="animate-spin h-8 w-8 text-primary" />
     </div>
   </div>
 </template>
@@ -171,116 +203,29 @@ function translateType(type) {
   };
   return typeMap[type] || type;
 }
+
+// タイプごとのカラー設定（Nuxt UI用）
+function getTypeColor(type) {
+  const colorMap = {
+    normal: 'gray',
+    fire: 'red',
+    water: 'blue',
+    electric: 'yellow',
+    grass: 'green',
+    ice: 'cyan',
+    fighting: 'orange',
+    poison: 'purple',
+    ground: 'amber',
+    flying: 'sky',
+    psychic: 'pink',
+    bug: 'lime',
+    rock: 'stone',
+    ghost: 'violet',
+    dragon: 'indigo',
+    dark: 'slate',
+    steel: 'zinc',
+    fairy: 'rose',
+  };
+  return colorMap[type] || 'gray';
+}
 </script>
-
-<style scoped>
-.pokemon-list {
-  padding: 20px;
-}
-
-.search-container {
-  margin-bottom: 20px;
-}
-
-.search-container input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-}
-
-.pokemon-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 5px;
-}
-
-.pokemon-card {
-  background-color: #f5f5f5;
-  border-radius: 10px;
-  padding: 15px;
-  text-align: center;
-  cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.pokemon-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-.pokemon-info h3 {
-  margin: 10px 0 5px;
-}
-
-.pokemon-types {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-  margin-top: 5px;
-}
-
-.pokemon-types span {
-  padding: 3px 8px;
-  border-radius: 5px;
-  font-size: 12px;
-  color: white;
-}
-
-/* タイプ別の色設定 */
-.type-normal {
-  background-color: #a8a878;
-}
-.type-fire {
-  background-color: #f08030;
-}
-.type-water {
-  background-color: #6890f0;
-}
-.type-electric {
-  background-color: #f8d030;
-}
-.type-grass {
-  background-color: #78c850;
-}
-.type-ice {
-  background-color: #98d8d8;
-}
-.type-fighting {
-  background-color: #c03028;
-}
-.type-poison {
-  background-color: #a040a0;
-}
-.type-ground {
-  background-color: #e0c068;
-}
-.type-flying {
-  background-color: #a890f0;
-}
-.type-psychic {
-  background-color: #f85888;
-}
-.type-bug {
-  background-color: #a8b820;
-}
-.type-rock {
-  background-color: #b8a038;
-}
-.type-ghost {
-  background-color: #705898;
-}
-.type-dragon {
-  background-color: #7038f8;
-}
-.type-dark {
-  background-color: #705848;
-}
-.type-steel {
-  background-color: #b8b8d0;
-}
-.type-fairy {
-  background-color: #ee99ac;
-}
-</style>

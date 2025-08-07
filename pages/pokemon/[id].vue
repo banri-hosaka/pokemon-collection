@@ -1,136 +1,199 @@
 <template>
-  <div v-if="pokemon" class="pokemon-detail">
-    <div class="back-button" @click="router.back()">戻る</div>
+  <div v-if="pokemon">
+    <!-- 戻るボタン -->
+    <UButton
+      icon="i-heroicons-arrow-left-20-solid"
+      color="gray"
+      variant="ghost"
+      class="mb-6"
+      @click="router.back()"
+    >
+      戻る
+    </UButton>
 
-    <div class="pokemon-header">
-      <div class="pokemon-image">
-        <img :src="pokemon.sprites.front_default" :alt="pokemon.japaneseName" />
-      </div>
-      <div class="pokemon-basic-info">
-        <h1>{{ pokemon.japaneseName }}</h1>
-        <p class="pokemon-id">
-          No.{{ pokemon.id.toString().padStart(3, "0") }}
-        </p>
-        <div class="pokemon-types">
-          <span
-            v-for="type in pokemon.types"
-            :key="type.slot"
-            :class="'type-' + type.type.name"
-          >
-            {{ translateType(type.type.name) }}
-          </span>
+    <!-- ポケモンヘッダー -->
+    <UCard class="mb-6">
+      <div class="flex items-center gap-6">
+        <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center">
+          <img 
+            :src="pokemon.sprites.front_default" 
+            :alt="pokemon.japaneseName"
+            class="w-24 h-24"
+          />
         </div>
-      </div>
-    </div>
-
-    <div class="detail-tabs">
-      <button
-        :class="{ active: activeTab === 'info' }"
-        @click="activeTab = 'info'"
-      >
-        詳細情報
-      </button>
-      <button
-        :class="{ active: activeTab === 'collection' }"
-        @click="activeTab = 'collection'"
-      >
-        コレクション
-      </button>
-    </div>
-
-    <div v-if="activeTab === 'info'" class="info-tab">
-      <div class="stats-section">
-        <h3>ステータス</h3>
-        <div class="stat-bars">
-          <div
-            v-for="stat in pokemon.stats"
-            :key="stat.stat.name"
-            class="stat-item"
-          >
-            <div class="stat-name">{{ translateStat(stat.stat.name) }}</div>
-            <div class="stat-bar-container">
-              <div
-                class="stat-bar"
-                :style="{ width: `${(stat.base_stat / 255) * 100}%` }"
-              ></div>
-            </div>
-            <div class="stat-value">{{ stat.base_stat }}</div>
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800">{{ pokemon.japaneseName }}</h1>
+          <p class="text-lg text-gray-600 mt-1">
+            No.{{ pokemon.id.toString().padStart(3, "0") }}
+          </p>
+          <div class="flex gap-2 mt-3">
+            <UBadge
+              v-for="type in pokemon.types"
+              :key="type.slot"
+              :color="getTypeColor(type.type.name)"
+              variant="solid"
+              size="md"
+            >
+              {{ translateType(type.type.name) }}
+            </UBadge>
           </div>
         </div>
       </div>
+    </UCard>
 
-      <div class="physical-info">
-        <div class="info-item">
-          <h4>たかさ</h4>
-          <p>{{ (pokemon.height / 10).toFixed(1) }}m</p>
+    <!-- タブ -->
+    <UTabs v-model="activeTab" class="mb-6">
+      <UTab name="info" label="詳細情報" />
+      <UTab name="collection" label="コレクション" />
+    </UTabs>
+
+    <!-- 詳細情報タブ -->
+    <div v-if="activeTab === 'info'">
+      <UCard>
+        <template #header>
+          <h3 class="text-lg font-semibold">ステータス</h3>
+        </template>
+        
+        <div class="space-y-4">
+          <div
+            v-for="stat in pokemon.stats"
+            :key="stat.stat.name"
+            class="flex items-center gap-4"
+          >
+            <div class="w-24 text-sm font-medium text-gray-700">
+              {{ translateStat(stat.stat.name) }}
+            </div>
+            <div class="flex-1">
+              <UProgress 
+                :value="stat.base_stat" 
+                :max="255"
+                color="primary"
+                size="md"
+              />
+            </div>
+            <div class="w-12 text-right text-sm font-semibold">
+              {{ stat.base_stat }}
+            </div>
+          </div>
         </div>
-        <div class="info-item">
-          <h4>おもさ</h4>
-          <p>{{ (pokemon.weight / 10).toFixed(1) }}kg</p>
-        </div>
+      </UCard>
+
+      <div class="grid grid-cols-2 gap-4 mt-4">
+        <UCard>
+          <div class="text-center">
+            <h4 class="text-sm font-medium text-gray-600 mb-1">たかさ</h4>
+            <p class="text-xl font-bold">{{ (pokemon.height / 10).toFixed(1) }}m</p>
+          </div>
+        </UCard>
+        <UCard>
+          <div class="text-center">
+            <h4 class="text-sm font-medium text-gray-600 mb-1">おもさ</h4>
+            <p class="text-xl font-bold">{{ (pokemon.weight / 10).toFixed(1) }}kg</p>
+          </div>
+        </UCard>
       </div>
     </div>
 
-    <div v-else-if="activeTab === 'collection'" class="collection-tab">
-      <div v-if="isInCollection" class="collection-data">
-        <h3>コレクション情報</h3>
+    <!-- コレクションタブ -->
+    <div v-else-if="activeTab === 'collection'">
+      <UCard v-if="isInCollection">
+        <template #header>
+          <h3 class="text-lg font-semibold">コレクション情報</h3>
+        </template>
+        
+        <div class="space-y-4">
+          <UFormGroup label="ニックネーム">
+            <UInput
+              v-model="collectionData.nickname"
+              placeholder="ニックネームを入力"
+              size="md"
+            />
+          </UFormGroup>
 
-        <div class="form-group">
-          <label for="nickname">ニックネーム:</label>
-          <input
-            id="nickname"
-            v-model="collectionData.nickname"
-            placeholder="ニックネームを入力"
-          />
-        </div>
+          <UFormGroup label="メモ">
+            <UTextarea
+              v-model="collectionData.memo"
+              placeholder="メモを入力"
+              :rows="4"
+              size="md"
+            />
+          </UFormGroup>
 
-        <div class="form-group">
-          <label for="memo">メモ:</label>
-          <textarea
-            id="memo"
-            v-model="collectionData.memo"
-            placeholder="メモを入力"
-          />
-        </div>
-
-        <div class="form-group checkbox">
-          <input
-            id="favorite"
+          <UCheckbox
             v-model="collectionData.isFavorite"
-            type="checkbox"
+            label="お気に入りに登録"
           />
-          <label for="favorite">お気に入りに登録</label>
-        </div>
 
-        <div class="collection-actions">
-          <button class="save-button" @click="updateCollection">保存</button>
-          <button class="delete-button" @click="removeFromCollection">
-            コレクションから削除
-          </button>
+          <div class="flex gap-3 pt-4">
+            <UButton
+              color="primary"
+              size="md"
+              @click="updateCollection"
+            >
+              保存
+            </UButton>
+            <UButton
+              color="red"
+              variant="soft"
+              size="md"
+              @click="removeFromCollection"
+            >
+              コレクションから削除
+            </UButton>
+          </div>
         </div>
-      </div>
+      </UCard>
 
-      <div v-else class="collection-empty">
-        <p>このポケモンはまだコレクションに追加されていません。</p>
-        <button class="add-button" @click="addToCollection">
-          コレクションに追加
-        </button>
-      </div>
+      <UCard v-else>
+        <div class="text-center py-8">
+          <p class="text-gray-600 mb-4">
+            このポケモンはまだコレクションに追加されていません。
+          </p>
+          <UButton
+            color="primary"
+            size="lg"
+            icon="i-heroicons-plus-20-solid"
+            @click="addToCollection"
+          >
+            コレクションに追加
+          </UButton>
+        </div>
+      </UCard>
     </div>
 
-    <div v-if="statusMessage" class="status-message" :class="messageType">
-      {{ statusMessage }}
+    <!-- ステータスメッセージ -->
+    <UNotification
+      v-if="statusMessage"
+      :title="statusMessage"
+      :color="messageType === 'success' ? 'green' : 'red'"
+      :icon="messageType === 'success' ? 'i-heroicons-check-circle' : 'i-heroicons-x-circle'"
+      class="fixed bottom-4 right-4 z-50"
+    />
+  </div>
+
+  <!-- エラー表示 -->
+  <div v-else-if="error" class="flex flex-col items-center justify-center min-h-[50vh]">
+    <UCard class="max-w-md w-full">
+      <div class="text-center">
+        <UIcon name="i-heroicons-exclamation-triangle" class="text-red-500 text-4xl mb-4" />
+        <h2 class="text-xl font-semibold mb-2">エラーが発生しました</h2>
+        <p class="text-gray-600 mb-4">{{ error }}</p>
+        <UButton
+          color="primary"
+          @click="router.push('/')"
+        >
+          トップページに戻る
+        </UButton>
+      </div>
+    </UCard>
+  </div>
+
+  <!-- ローディング -->
+  <div v-else class="flex items-center justify-center min-h-[50vh]">
+    <div class="text-center">
+      <UIcon name="i-heroicons-arrow-path-20-solid" class="animate-spin h-12 w-12 text-primary mb-4" />
+      <p class="text-gray-600">読み込み中...</p>
     </div>
-  </div>
-
-  <div v-else-if="error" class="error-container">
-    <h2>エラーが発生しました</h2>
-    <p>{{ error }}</p>
-    <button @click="router.push('/')">トップページに戻る</button>
-  </div>
-
-  <div v-else class="loading-container">
-    <p>読み込み中...</p>
   </div>
 </template>
 
@@ -353,6 +416,31 @@ function translateType(type) {
   return typeMap[type] || type;
 }
 
+// タイプごとのカラー設定（Nuxt UI用）
+function getTypeColor(type) {
+  const colorMap = {
+    normal: 'gray',
+    fire: 'red',
+    water: 'blue',
+    electric: 'yellow',
+    grass: 'green',
+    ice: 'cyan',
+    fighting: 'orange',
+    poison: 'purple',
+    ground: 'amber',
+    flying: 'sky',
+    psychic: 'pink',
+    bug: 'lime',
+    rock: 'stone',
+    ghost: 'violet',
+    dragon: 'indigo',
+    dark: 'slate',
+    steel: 'zinc',
+    fairy: 'rose',
+  };
+  return colorMap[type] || 'gray';
+}
+
 // ステータス名の日本語変換
 function translateStat(stat) {
   const statMap = {
@@ -366,280 +454,3 @@ function translateStat(stat) {
   return statMap[stat] || stat;
 }
 </script>
-
-<style scoped>
-.pokemon-detail {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  position: relative;
-}
-
-.back-button {
-  display: inline-block;
-  margin-bottom: 20px;
-  cursor: pointer;
-  padding: 5px 10px;
-  border-radius: 5px;
-  background-color: #f0f0f0;
-}
-
-.pokemon-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-.pokemon-image {
-  width: 150px;
-  height: 150px;
-  background-color: #f5f5f5;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 20px;
-}
-
-.pokemon-image img {
-  width: 120px;
-  height: 120px;
-}
-
-.pokemon-basic-info h1 {
-  margin: 0;
-  font-size: 2rem;
-}
-
-.pokemon-id {
-  font-size: 1.2rem;
-  color: #666;
-  margin: 5px 0;
-}
-
-.pokemon-types {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.pokemon-types span {
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 14px;
-  color: white;
-}
-
-.detail-tabs {
-  display: flex;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #ddd;
-}
-
-.detail-tabs button {
-  padding: 10px 20px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  opacity: 0.7;
-}
-
-.detail-tabs button.active {
-  opacity: 1;
-  border-bottom: 3px solid #2196f3;
-}
-
-.stats-section {
-  margin-bottom: 30px;
-}
-
-.stat-bars {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-}
-
-.stat-name {
-  width: 100px;
-}
-
-.stat-bar-container {
-  flex-grow: 1;
-  height: 15px;
-  background-color: #eee;
-  border-radius: 10px;
-  overflow: hidden;
-  margin: 0 10px;
-}
-
-.stat-bar {
-  height: 100%;
-  background-color: #4caf50;
-  border-radius: 10px;
-}
-
-.stat-value {
-  width: 30px;
-  text-align: right;
-}
-
-.physical-info {
-  display: flex;
-  justify-content: space-around;
-}
-
-.info-item {
-  text-align: center;
-}
-
-.collection-tab {
-  padding: 20px 0;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-.form-group textarea {
-  height: 100px;
-  resize: vertical;
-}
-
-.form-group.checkbox {
-  display: flex;
-  align-items: center;
-}
-
-.form-group.checkbox input {
-  width: auto;
-  margin-right: 10px;
-}
-
-.collection-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.save-button,
-.add-button {
-  padding: 10px 20px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.delete-button {
-  padding: 10px 20px;
-  background-color: #f44336;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.status-message {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 10px 20px;
-  border-radius: 5px;
-  color: white;
-  z-index: 100;
-}
-
-.status-message.success {
-  background-color: #4caf50;
-}
-
-.status-message.error {
-  background-color: #f44336;
-}
-
-.error-container,
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 70vh;
-}
-
-/* タイプ別の色設定（前述と同じ） */
-.type-normal {
-  background-color: #a8a878;
-}
-.type-fire {
-  background-color: #f08030;
-}
-.type-water {
-  background-color: #6890f0;
-}
-.type-electric {
-  background-color: #f8d030;
-}
-.type-grass {
-  background-color: #78c850;
-}
-.type-ice {
-  background-color: #98d8d8;
-}
-.type-fighting {
-  background-color: #c03028;
-}
-.type-poison {
-  background-color: #a040a0;
-}
-.type-ground {
-  background-color: #e0c068;
-}
-.type-flying {
-  background-color: #a890f0;
-}
-.type-psychic {
-  background-color: #f85888;
-}
-.type-bug {
-  background-color: #a8b820;
-}
-.type-rock {
-  background-color: #b8a038;
-}
-.type-ghost {
-  background-color: #705898;
-}
-.type-dragon {
-  background-color: #7038f8;
-}
-.type-dark {
-  background-color: #705848;
-}
-.type-steel {
-  background-color: #b8b8d0;
-}
-.type-fairy {
-  background-color: #ee99ac;
-}
-</style>
