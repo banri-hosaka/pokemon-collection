@@ -3,14 +3,12 @@
     <header>
       <nav class="navigation">
         <NuxtLink to="/" class="nav-button">ポケモン図鑑</NuxtLink>
-        <NuxtLink to="debug" class="nav-button">デバッグデモ</NuxtLink>
-        <NuxtLink to="button" class="nav-button">Figmaサンプル</NuxtLink>
-        <!-- <NuxtLink to="/about" class="nav-button">アバウト</NuxtLink> -->
+        <NuxtLink to="/debug" class="nav-button">デバッグデモ</NuxtLink>
+        <NuxtLink to="/button" class="nav-button">Figmaサンプル</NuxtLink>
       </nav>
     </header>
     <main>
       <slot />
-      <!-- ここにページコンテンツが表示される -->
     </main>
     <footer>
       <p>© 2025 pokemon-collection</p>
@@ -24,20 +22,22 @@
   justify-content: left;
   gap: 10px;
   padding: 15px;
+  background-color: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
-.nav-button {
-  display: inline-block;
-  background: #19eace;
-  color: white;
-  padding: 10px 20px;
-  text-decoration: none;
-  border-radius: 4px;
+/* nav-buttonクラスはグローバルCSSで定義済み */
+
+main {
+  min-height: calc(100vh - 120px);
+  padding: 20px;
+}
+
+footer {
+  background-color: var(--color-gray-50);
+  border-top: 1px solid var(--color-gray-200);
+  padding: 15px;
   text-align: center;
-  transition: background-color 0.3s;
-}
-
-.nav-button:hover {
-  background: #16cbb3;
+  color: var(--color-gray-600);
 }
 </style>

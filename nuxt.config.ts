@@ -5,6 +5,8 @@ export default defineNuxtConfig({
 
   ssr: false, // SPAモードの有効化
 
+  css: ['~/assets/css/main.css'],
+
   modules: [
     "@nuxt/content",
     "@nuxt/eslint",

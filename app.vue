@@ -2,8 +2,7 @@
   <div>
     <!-- ポケモンローダー -->
     <PokemonLoader :loading="isLoading" />
-  </div>
-  <div>
+    
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
@@ -37,24 +36,10 @@ if (import.meta.client) {
 </script>
 
 <style>
-/* グローバルCSS */
-html {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  margin: 5px;
-  padding: 5px;
-  background-color: #fafafa;
-}
-
 /* ページ遷移アニメーション */
 .page-enter-active,
 .page-leave-active {
-  transition: opacity 0.3s, transform 0.3s;
+  transition: all 0.3s ease;
 }
 
 .page-enter-from {
