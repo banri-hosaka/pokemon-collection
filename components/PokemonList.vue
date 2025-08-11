@@ -14,20 +14,32 @@
         v-for="pokemon in displayedPokemons"
         :key="pokemon.id"
         class="pokemon-card"
+        :data-type="pokemon.types[0]?.type.name"
         @click="navigateToPokemon(pokemon.id)"
       >
-        <img :src="pokemon.sprites.front_default" :alt="pokemon.japaneseName" />
-        <div class="pokemon-info">
-          <h3>{{ pokemon.japaneseName }}</h3>
-          <p>No.{{ pokemon.id.toString().padStart(3, "0") }}</p>
-          <div class="pokemon-types">
-            <span
-              v-for="type in pokemon.types"
-              :key="type.slot"
-              :class="'type-' + type.type.name"
-            >
-              {{ translateType(type.type.name) }}
-            </span>
+        <div class="pokemon-card-inner">
+          <!-- カードヘッダー -->
+          <div class="card-header">
+            <span class="pokemon-number">No.{{ pokemon.id.toString().padStart(3, "0") }}</span>
+            <span class="pokemon-name">{{ pokemon.japaneseName }}</span>
+          </div>
+          
+          <!-- イラスト枠 -->
+          <div class="card-artwork">
+            <img :src="pokemon.sprites.front_default" :alt="pokemon.japaneseName" />
+          </div>
+          
+          <!-- タイプバッジ部分 -->
+          <div class="card-footer">
+            <div class="pokemon-types">
+              <span
+                v-for="type in pokemon.types"
+                :key="type.slot"
+                :class="'type-badge type-' + type.type.name"
+              >
+                {{ translateType(type.type.name) }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -172,6 +184,31 @@ function translateType(type) {
   };
   return typeMap[type] || type;
 }
+
+// タイプの絵文字を取得
+function getTypeEmoji(type) {
+  const emojiMap = {
+    normal: "⭐",
+    fire: "🔥",
+    water: "💧",
+    electric: "⚡",
+    grass: "🌿",
+    ice: "❄️",
+    fighting: "👊",
+    poison: "☠️",
+    ground: "⛰️",
+    flying: "🦅",
+    psychic: "🔮",
+    bug: "🐛",
+    rock: "🪨",
+    ghost: "👻",
+    dragon: "🐲",
+    dark: "🌙",
+    steel: "⚙️",
+    fairy: "✨",
+  };
+  return emojiMap[type] || "⭐";
+}
 </script>
 
 <style scoped>
@@ -212,53 +249,92 @@ function translateType(type) {
   gap: 15px;
 }
 
-/* ポケモンカードはグローバルスタイルを活用 */
-.pokemon-card {
-  background-color: var(--color-gray-50);
+/* シンプルなポケモンカード風スタイル */
+.pokemon-card-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 6px 6px 0 0;
+  font-size: 0.65rem;
+  font-weight: bold;
+  border-bottom: 2px solid #d4d4d4;
+}
+
+.pokemon-number {
+  font-family: 'DotGothic16', monospace;
+  font-size: 0.6rem;
+  color: #555;
+}
+
+.pokemon-name {
+  flex: 1;
+  font-family: 'DotGothic16', monospace;
+  font-size: 0.75rem;
+  color: #000;
+}
+
+.card-artwork {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 6px;
+  padding: 8px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(245, 245, 245, 0.6) 100%
+  );
+  border: 4px solid #d4d4d4;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
 }
 
 .pokemon-card img {
-  width: 96px;
-  height: 96px;
-  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+  max-width: 110px;
+  max-height: 110px;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.15));
 }
 
-.pokemon-info h3 {
-  margin: 10px 0 5px;
-  font-family: 'DotGothic16', monospace;
-  font-weight: 600;
-  color: var(--gbc-green-darkest);
-  position: relative;
-  z-index: 2;
-}
-
-.pokemon-info p {
-  font-family: 'DotGothic16', monospace;
-  color: var(--retro-brown);
-  font-size: 0.85rem;
-  position: relative;
-  z-index: 2;
+.card-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border-top: 2px solid #d4d4d4;
+  border-radius: 0 0 6px 6px;
 }
 
 .pokemon-types {
   display: flex;
-  justify-content: center;
-  gap: 5px;
-  margin-top: 8px;
-  position: relative;
-  z-index: 2;
+  gap: 4px;
 }
 
-/* タイプバッジにレトロ風のボーダー */
-.pokemon-types span {
+.type-badge {
   font-family: 'DotGothic16', monospace;
-  font-size: 0.7rem;
-  padding: 2px 6px;
-  border: 2px solid var(--gbc-green-darkest);
-  box-shadow: 
-    2px 2px 0px var(--gbc-green-dark),
-    inset 1px 1px 0px rgba(255, 255, 255, 0.3);
+  font-size: 0.65rem;
+  padding: 3px 10px;
+  border-radius: 12px;
+  color: white;
+  font-weight: bold;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-/* グローバルCSSのタイプスタイルを使用するため、個別定義は削除 */
+/* グローバルCSSのタイプスタイルを使用 */
 </style>
