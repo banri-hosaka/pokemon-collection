@@ -180,9 +180,12 @@ function translateType(type) {
 }
 
 .pokemon-list h1 {
+  font-family: 'DotGothic16', monospace;
   font-size: 2rem;
   font-weight: bold;
   margin-bottom: 20px;
+  color: var(--gbc-green-dark);
+  text-shadow: 2px 2px 0px var(--gbc-green-light);
 }
 
 .search-container {
@@ -192,9 +195,15 @@ function translateType(type) {
 .search-input {
   width: 100%;
   padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-gray-300);
   font-size: 16px;
+  transition: border-color var(--transition-fast);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
 }
 
 .pokemon-grid {
@@ -203,18 +212,9 @@ function translateType(type) {
   gap: 15px;
 }
 
+/* ポケモンカードはグローバルスタイルを活用 */
 .pokemon-card {
-  background-color: #f5f5f5;
-  border-radius: 10px;
-  padding: 15px;
-  text-align: center;
-  cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.pokemon-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-gray-50);
 }
 
 .pokemon-card img {
@@ -225,12 +225,19 @@ function translateType(type) {
 
 .pokemon-info h3 {
   margin: 10px 0 5px;
+  font-family: 'DotGothic16', monospace;
   font-weight: 600;
+  color: var(--gbc-green-darkest);
+  position: relative;
+  z-index: 2;
 }
 
 .pokemon-info p {
-  color: #666;
-  font-size: 0.9rem;
+  font-family: 'DotGothic16', monospace;
+  color: var(--retro-brown);
+  font-size: 0.85rem;
+  position: relative;
+  z-index: 2;
 }
 
 .pokemon-types {
@@ -238,32 +245,20 @@ function translateType(type) {
   justify-content: center;
   gap: 5px;
   margin-top: 8px;
+  position: relative;
+  z-index: 2;
 }
 
+/* タイプバッジにレトロ風のボーダー */
 .pokemon-types span {
-  padding: 3px 8px;
-  border-radius: 5px;
-  font-size: 12px;
-  color: white;
+  font-family: 'DotGothic16', monospace;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border: 2px solid var(--gbc-green-darkest);
+  box-shadow: 
+    2px 2px 0px var(--gbc-green-dark),
+    inset 1px 1px 0px rgba(255, 255, 255, 0.3);
 }
 
-/* タイプ別の色設定 */
-.type-normal { background-color: #a8a878; }
-.type-fire { background-color: #f08030; }
-.type-water { background-color: #6890f0; }
-.type-electric { background-color: #f8d030; }
-.type-grass { background-color: #78c850; }
-.type-ice { background-color: #98d8d8; }
-.type-fighting { background-color: #c03028; }
-.type-poison { background-color: #a040a0; }
-.type-ground { background-color: #e0c068; }
-.type-flying { background-color: #a890f0; }
-.type-psychic { background-color: #f85888; }
-.type-bug { background-color: #a8b820; }
-.type-rock { background-color: #b8a038; }
-.type-ghost { background-color: #705898; }
-.type-dragon { background-color: #7038f8; }
-.type-dark { background-color: #705848; }
-.type-steel { background-color: #b8b8d0; }
-.type-fairy { background-color: #ee99ac; }
+/* グローバルCSSのタイプスタイルを使用するため、個別定義は削除 */
 </style>

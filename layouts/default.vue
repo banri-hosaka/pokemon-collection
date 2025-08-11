@@ -22,24 +22,11 @@
   justify-content: left;
   gap: 10px;
   padding: 15px;
-  background-color: #f8f8f8;
-  border-bottom: 1px solid #ddd;
+  background-color: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
-.nav-button {
-  display: inline-block;
-  background: #4caf50;
-  color: white;
-  padding: 10px 20px;
-  text-decoration: none;
-  border-radius: 4px;
-  text-align: center;
-  transition: background-color 0.3s;
-}
-
-.nav-button:hover {
-  background: #45a049;
-}
+/* nav-buttonクラスはグローバルCSSで定義済み */
 
 main {
   min-height: calc(100vh - 120px);
@@ -47,10 +34,10 @@ main {
 }
 
 footer {
-  background-color: #f8f8f8;
-  border-top: 1px solid #ddd;
+  background-color: var(--color-gray-50);
+  border-top: 1px solid var(--color-gray-200);
   padding: 15px;
   text-align: center;
-  color: #666;
+  color: var(--color-gray-600);
 }
 </style>
