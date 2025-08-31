@@ -25,7 +25,7 @@
             >
             <span class="pokemon-name">{{ pokemon.japaneseName }}</span>
             <!-- TODO(human): お気に入りボタンをここに追加してください -->
-            <FavoriteButton />
+            <FavoriteButton :pokemonId="pokemon.id" />
           </div>
 
           <!-- イラスト枠 -->
