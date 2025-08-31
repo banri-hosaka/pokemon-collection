@@ -1,21 +1,27 @@
 <template>
-  <div v-if="pokemon" class="pokemon-detail">
-    <div class="back-button" @click="router.back()">戻る</div>
+  <div v-if="pokemon" class="pokemon-detail-page">
+    <!-- 戻るボタン -->
+    <button class="back-button" @click="router.back()">
+      ← 戻る
+    </button>
 
-    <div class="pokemon-header">
-      <div class="pokemon-image">
-        <img :src="pokemon.sprites.front_default" :alt="pokemon.japaneseName" />
+    <!-- ポケモンサークル表示 -->
+    <div class="pokemon-circle-container">
+      <div class="pokemon-circle" :data-type="pokemon.types[0]?.type.name">
+        <div class="circle-background"></div>
+        <div class="circle-inner">
+          <img :src="pokemon.sprites.front_default" :alt="pokemon.japaneseName" />
+        </div>
+        <div class="circle-border"></div>
       </div>
-      <div class="pokemon-basic-info">
-        <h1>{{ pokemon.japaneseName }}</h1>
-        <p class="pokemon-id">
-          No.{{ pokemon.id.toString().padStart(3, "0") }}
-        </p>
+      <div class="pokemon-info-header">
+        <p class="pokemon-number">No.{{ pokemon.id.toString().padStart(3, "0") }}</p>
+        <h1 class="pokemon-name">{{ pokemon.japaneseName }}</h1>
         <div class="pokemon-types">
           <span
             v-for="type in pokemon.types"
             :key="type.slot"
-            :class="'type-' + type.type.name"
+            :class="'type-badge type-' + type.type.name"
           >
             {{ translateType(type.type.name) }}
           </span>
@@ -23,113 +29,102 @@
       </div>
     </div>
 
-    <div class="detail-tabs">
-      <button
-        :class="{ active: activeTab === 'info' }"
-        @click="activeTab = 'info'"
-      >
-        詳細情報
-      </button>
-      <button
-        :class="{ active: activeTab === 'collection' }"
-        @click="activeTab = 'collection'"
-      >
-        コレクション
-      </button>
-    </div>
-
-    <div v-if="activeTab === 'info'" class="info-tab">
-      <div class="stats-section">
-        <h3>ステータス</h3>
-        <div class="stat-bars">
-          <div
-            v-for="stat in pokemon.stats"
-            :key="stat.stat.name"
-            class="stat-item"
-          >
-            <div class="stat-name">{{ translateStat(stat.stat.name) }}</div>
-            <div class="stat-bar-container">
-              <div
-                class="stat-bar"
-                :style="{ width: `${(stat.base_stat / 255) * 100}%` }"
-              ></div>
-            </div>
-            <div class="stat-value">{{ stat.base_stat }}</div>
+    <!-- ステータスカード -->
+    <div class="stats-card">
+      <h3 class="stats-title">ステータス</h3>
+      <div class="stats-grid">
+        <div v-for="stat in pokemon.stats" :key="stat.stat.name" class="stat-item">
+          <span class="stat-label">{{ translateStat(stat.stat.name) }}</span>
+          <div class="stat-bar-container">
+            <div class="stat-bar" :style="{ width: (stat.base_stat / 255 * 100) + '%' }"></div>
           </div>
+          <span class="stat-value">{{ stat.base_stat }}</span>
         </div>
       </div>
-
-      <div class="physical-info">
+      
+      <!-- 身体情報 -->
+      <div class="body-info">
         <div class="info-item">
-          <h4>たかさ</h4>
-          <p>{{ (pokemon.height / 10).toFixed(1) }}m</p>
+          <span class="info-label">たかさ</span>
+          <span class="info-value">{{ (pokemon.height / 10).toFixed(1) }}m</span>
         </div>
         <div class="info-item">
-          <h4>おもさ</h4>
-          <p>{{ (pokemon.weight / 10).toFixed(1) }}kg</p>
+          <span class="info-label">おもさ</span>
+          <span class="info-value">{{ (pokemon.weight / 10).toFixed(1) }}kg</span>
         </div>
       </div>
     </div>
 
-    <div v-else-if="activeTab === 'collection'" class="collection-tab">
-      <div v-if="isInCollection" class="collection-data">
-        <h3>コレクション情報</h3>
-
+    <!-- コレクションカード -->
+    <div class="collection-card">
+      <h3 class="collection-title">コレクション</h3>
+      
+      <div v-if="isInCollection" class="collection-form">
         <div class="form-group">
-          <label for="nickname">ニックネーム:</label>
+          <label>ニックネーム</label>
           <input
-            id="nickname"
             v-model="collectionData.nickname"
+            type="text"
             placeholder="ニックネームを入力"
+            class="form-input"
           />
         </div>
 
         <div class="form-group">
-          <label for="memo">メモ:</label>
+          <label>メモ</label>
           <textarea
-            id="memo"
             v-model="collectionData.memo"
             placeholder="メモを入力"
+            rows="3"
+            class="form-textarea"
           />
         </div>
 
-        <div class="form-group checkbox">
-          <input
-            id="favorite"
-            v-model="collectionData.isFavorite"
-            type="checkbox"
-          />
-          <label for="favorite">お気に入りに登録</label>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input
+              v-model="collectionData.isFavorite"
+              type="checkbox"
+              class="form-checkbox"
+            />
+            お気に入りに登録
+          </label>
         </div>
 
-        <div class="collection-actions">
-          <button class="save-button" @click="updateCollection">保存</button>
-          <button class="delete-button" @click="removeFromCollection">
-            コレクションから削除
-          </button>
+        <div class="button-group">
+          <button class="btn-save" @click="updateCollection">保存</button>
+          <button class="btn-delete" @click="removeFromCollection">削除</button>
         </div>
       </div>
 
       <div v-else class="collection-empty">
-        <p>このポケモンはまだコレクションに追加されていません。</p>
-        <button class="add-button" @click="addToCollection">
+        <p>このポケモンはまだコレクションに追加されていません</p>
+        <button class="btn-add" @click="addToCollection">
           コレクションに追加
         </button>
       </div>
     </div>
 
-    <div v-if="statusMessage" class="status-message" :class="messageType">
+    <!-- ステータスメッセージ -->
+    <div v-if="statusMessage" :class="['status-message', messageType]">
       {{ statusMessage }}
     </div>
   </div>
 
+  <!-- エラー表示 -->
   <div v-else-if="error" class="error-container">
-    <h2>エラーが発生しました</h2>
-    <p>{{ error }}</p>
-    <button @click="router.push('/')">トップページに戻る</button>
+    <div class="error-card">
+      <h2>エラーが発生しました</h2>
+      <p>{{ error }}</p>
+      <button class="btn-home" @click="router.push('/')">
+        トップページに戻る
+      </button>
+    </div>
   </div>
 
+  <!-- ローディング -->
   <div v-else class="loading-container">
+    <div class="loading-spinner"></div>
     <p>読み込み中...</p>
   </div>
 </template>
@@ -142,7 +137,6 @@ const route = useRoute();
 const router = useRouter();
 const pokemon = ref(null);
 const error = ref(null);
-const activeTab = ref("info");
 const isInCollection = ref(false);
 const collectionData = ref({
   id: null,
@@ -368,278 +362,524 @@ function translateStat(stat) {
 </script>
 
 <style scoped>
-.pokemon-detail {
+/* ページ全体のレイアウト */
+.pokemon-detail-page {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  position: relative;
+  font-family: 'DotGothic16', monospace;
 }
 
+/* 戻るボタン */
 .back-button {
-  display: inline-block;
-  margin-bottom: 20px;
+  padding: 8px 16px;
+  background-color: var(--color-gray-200);
+  border: 2px solid var(--color-gray-400);
+  border-radius: 6px;
+  font-family: 'DotGothic16', monospace;
   cursor: pointer;
-  padding: 5px 10px;
-  border-radius: 5px;
-  background-color: #f0f0f0;
+  transition: all 0.3s;
+  margin-bottom: 20px;
 }
 
-.pokemon-header {
+.back-button:hover {
+  background-color: var(--color-gray-300);
+  transform: translateY(-2px);
+}
+
+/* ポケモンサークル表示 */
+.pokemon-circle-container {
   display: flex;
   align-items: center;
+  gap: 30px;
   margin-bottom: 30px;
+  padding: 20px;
+  background: linear-gradient(to bottom, #f8f8f8 0%, #e8e8e8 100%);
+  border: 6px solid #d4d4d4;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.pokemon-image {
-  width: 150px;
-  height: 150px;
-  background-color: #f5f5f5;
+.pokemon-circle {
+  position: relative;
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.15),
+    0 8px 16px rgba(0, 0, 0, 0.1),
+    inset 0 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.circle-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(248, 248, 248, 0.95) 40%,
+    rgba(235, 235, 235, 0.9) 100%
+  );
+}
+
+/* タイプ別の背景グラデーション */
+.pokemon-circle[data-type="grass"] .circle-background,
+.pokemon-circle[data-type="くさ"] .circle-background {
+  background: radial-gradient(
+    circle at center,
+    rgba(183, 230, 165, 0.4) 0%,
+    rgba(122, 199, 76, 0.6) 50%,
+    rgba(92, 183, 55, 0.9) 100%
+  );
+}
+
+.pokemon-circle[data-type="fire"] .circle-background,
+.pokemon-circle[data-type="ほのお"] .circle-background {
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 204, 153, 0.4) 0%,
+    rgba(238, 129, 48, 0.6) 50%,
+    rgba(229, 96, 32, 0.9) 100%
+  );
+}
+
+.pokemon-circle[data-type="water"] .circle-background,
+.pokemon-circle[data-type="みず"] .circle-background {
+  background: radial-gradient(
+    circle at center,
+    rgba(185, 207, 250, 0.4) 0%,
+    rgba(99, 144, 240, 0.6) 50%,
+    rgba(67, 112, 208, 0.9) 100%
+  );
+}
+
+.pokemon-circle[data-type="electric"] .circle-background,
+.pokemon-circle[data-type="でんき"] .circle-background {
+  background: radial-gradient(
+    circle at center,
+    rgba(247, 208, 44, 0.3) 0%,
+    rgba(247, 208, 44, 0.5) 50%,
+    rgba(240, 192, 24, 0.8) 100%
+  );
+}
+
+.pokemon-circle[data-type="psychic"] .circle-background,
+.pokemon-circle[data-type="エスパー"] .circle-background {
+  background: radial-gradient(
+    circle at center,
+    rgba(249, 85, 135, 0.3) 0%,
+    rgba(249, 85, 135, 0.5) 50%,
+    rgba(232, 64, 112, 0.8) 100%
+  );
+}
+
+.pokemon-circle[data-type="normal"] .circle-background,
+.pokemon-circle[data-type="ノーマル"] .circle-background {
+  background: radial-gradient(
+    circle at center,
+    rgba(168, 167, 122, 0.3) 0%,
+    rgba(168, 167, 122, 0.5) 50%,
+    rgba(145, 141, 93, 0.8) 100%
+  );
+}
+
+.circle-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 90%;
   display: flex;
-  justify-content: center;
   align-items: center;
-  margin-right: 20px;
+  justify-content: center;
+  z-index: 2;
 }
 
-.pokemon-image img {
-  width: 120px;
-  height: 120px;
+.circle-inner img {
+  width: 85%;
+  height: 85%;
+  object-fit: contain;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.25));
+  transition: transform 0.3s ease;
 }
 
-.pokemon-basic-info h1 {
-  margin: 0;
-  font-size: 2rem;
+.pokemon-circle:hover .circle-inner img {
+  transform: scale(1.1);
 }
 
-.pokemon-id {
-  font-size: 1.2rem;
+.circle-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  border: 6px solid #c8c8c8;
+  box-shadow: 
+    inset 0 0 0 2px rgba(255, 255, 255, 0.9),
+    inset 0 2px 4px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* ポケモン情報ヘッダー */
+.pokemon-info-header {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+.pokemon-info-header .pokemon-name {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: var(--gbc-green-dark);
+  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5);
+}
+
+.pokemon-info-header .pokemon-number {
+  font-size: 0.9rem;
   color: #666;
-  margin: 5px 0;
 }
 
 .pokemon-types {
   display: flex;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.pokemon-types span {
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 14px;
+.type-badge {
+  font-size: 0.8rem;
+  padding: 4px 12px;
+  border-radius: 12px;
   color: white;
+  font-weight: bold;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-.detail-tabs {
-  display: flex;
+/* ステータスカード */
+.stats-card {
+  background: linear-gradient(to bottom, #f8f8f8 0%, #e8e8e8 100%);
+  border: 6px solid #d4d4d4;
+  border-radius: 12px;
+  padding: 20px;
   margin-bottom: 20px;
-  border-bottom: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.detail-tabs button {
-  padding: 10px 20px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  opacity: 0.7;
+.stats-title {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: var(--gbc-green-dark);
+  text-align: center;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-.detail-tabs button.active {
-  opacity: 1;
-  border-bottom: 3px solid #2196f3;
-}
-
-.stats-section {
-  margin-bottom: 30px;
-}
-
-.stat-bars {
+.stats-grid {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
 .stat-item {
   display: flex;
   align-items: center;
+  gap: 10px;
 }
 
-.stat-name {
-  width: 100px;
+.stat-label {
+  width: 80px;
+  font-size: 0.85rem;
+  color: #333;
 }
 
 .stat-bar-container {
-  flex-grow: 1;
-  height: 15px;
-  background-color: #eee;
-  border-radius: 10px;
+  flex: 1;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid #999;
+  border-radius: 8px;
   overflow: hidden;
-  margin: 0 10px;
 }
 
 .stat-bar {
   height: 100%;
-  background-color: #4caf50;
-  border-radius: 10px;
+  background: linear-gradient(to right, var(--gbc-green-light) 0%, var(--gbc-green) 100%);
+  transition: width 0.5s ease;
 }
 
 .stat-value {
-  width: 30px;
+  width: 40px;
   text-align: right;
+  font-weight: bold;
+  color: #333;
 }
 
-.physical-info {
-  display: flex;
-  justify-content: space-around;
+.body-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding-top: 15px;
+  border-top: 2px solid #d4d4d4;
 }
 
 .info-item {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 6px;
 }
 
-.collection-tab {
-  padding: 20px 0;
+.info-label {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.info-value {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* コレクションカード */
+.collection-card {
+  background: linear-gradient(to bottom, #f8f8f8 0%, #e8e8e8 100%);
+  border: 6px solid #d4d4d4;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.collection-title {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: var(--gbc-green-dark);
+  text-align: center;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.collection-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 5px;
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: bold;
 }
 
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+.form-input,
+.form-textarea {
+  padding: 8px 12px;
+  border: 2px solid #d4d4d4;
+  border-radius: 6px;
+  font-family: 'DotGothic16', monospace;
+  font-size: 0.9rem;
+  background: white;
+  transition: border-color 0.3s;
 }
 
-.form-group textarea {
-  height: 100px;
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--gbc-green);
+}
+
+.form-textarea {
   resize: vertical;
+  min-height: 60px;
 }
 
-.form-group.checkbox {
+.checkbox-label {
   display: flex;
   align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
 }
 
-.form-group.checkbox input {
-  width: auto;
-  margin-right: 10px;
+.form-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
 }
 
-.collection-actions {
+.button-group {
   display: flex;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
-.save-button,
-.add-button {
+.btn-save,
+.btn-delete,
+.btn-add,
+.btn-home {
   padding: 10px 20px;
-  background-color: #4caf50;
-  color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
+  font-family: 'DotGothic16', monospace;
+  font-weight: bold;
   cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.delete-button {
-  padding: 10px 20px;
-  background-color: #f44336;
+.btn-save {
+  background: var(--gbc-green);
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  flex: 1;
 }
 
+.btn-save:hover {
+  background: var(--gbc-green-dark);
+  transform: translateY(-2px);
+}
+
+.btn-delete {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+}
+
+.btn-add {
+  background: var(--gbc-green);
+  color: white;
+  padding: 12px 24px;
+  font-size: 1rem;
+}
+
+.btn-add:hover {
+  background: var(--gbc-green-dark);
+  transform: translateY(-2px);
+}
+
+.collection-empty {
+  text-align: center;
+  padding: 20px;
+}
+
+.collection-empty p {
+  margin-bottom: 15px;
+  color: #666;
+}
+
+/* ステータスメッセージ */
 .status-message {
   position: fixed;
   bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 10px 20px;
-  border-radius: 5px;
-  color: white;
-  z-index: 100;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease;
+  z-index: 1000;
 }
 
 .status-message.success {
-  background-color: #4caf50;
+  background: var(--gbc-green);
+  color: white;
 }
 
 .status-message.error {
-  background-color: #f44336;
+  background: #e74c3c;
+  color: white;
 }
 
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* エラー表示 */
 .error-container,
 .loading-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  height: 70vh;
+  align-items: center;
+  min-height: 50vh;
 }
 
-/* タイプ別の色設定（前述と同じ） */
-.type-normal {
-  background-color: #a8a878;
+.error-card {
+  background: white;
+  border: 4px solid #e74c3c;
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  max-width: 400px;
 }
-.type-fire {
-  background-color: #f08030;
+
+.error-card h2 {
+  color: #e74c3c;
+  margin-bottom: 10px;
 }
-.type-water {
-  background-color: #6890f0;
+
+.error-card p {
+  color: #666;
+  margin-bottom: 20px;
 }
-.type-electric {
-  background-color: #f8d030;
+
+.btn-home {
+  background: var(--gbc-green);
+  color: white;
 }
-.type-grass {
-  background-color: #78c850;
+
+.btn-home:hover {
+  background: var(--gbc-green-dark);
+  transform: translateY(-2px);
 }
-.type-ice {
-  background-color: #98d8d8;
+
+/* ローディング */
+.loading-container {
+  flex-direction: column;
+  gap: 15px;
 }
-.type-fighting {
-  background-color: #c03028;
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--gbc-green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
-.type-poison {
-  background-color: #a040a0;
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
-.type-ground {
-  background-color: #e0c068;
-}
-.type-flying {
-  background-color: #a890f0;
-}
-.type-psychic {
-  background-color: #f85888;
-}
-.type-bug {
-  background-color: #a8b820;
-}
-.type-rock {
-  background-color: #b8a038;
-}
-.type-ghost {
-  background-color: #705898;
-}
-.type-dragon {
-  background-color: #7038f8;
-}
-.type-dark {
-  background-color: #705848;
-}
-.type-steel {
-  background-color: #b8b8d0;
-}
-.type-fairy {
-  background-color: #ee99ac;
+
+.loading-container p {
+  color: #666;
+  font-size: 0.9rem;
 }
 </style>

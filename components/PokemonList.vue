@@ -6,6 +6,7 @@
         v-model="searchQuery"
         type="text"
         placeholder="ポケモン名で検索..."
+        class="search-input"
       />
     </div>
     <div class="pokemon-grid">
@@ -13,20 +14,37 @@
         v-for="pokemon in displayedPokemons"
         :key="pokemon.id"
         class="pokemon-card"
+        :data-type="pokemon.types[0]?.type.name"
         @click="navigateToPokemon(pokemon.id)"
       >
-        <img :src="pokemon.sprites.front_default" :alt="pokemon.japaneseName" />
-        <div class="pokemon-info">
-          <h3>{{ pokemon.japaneseName }}</h3>
-          <p>No.{{ pokemon.id.toString().padStart(3, "0") }}</p>
-          <div class="pokemon-types">
-            <span
-              v-for="type in pokemon.types"
-              :key="type.slot"
-              :class="'type-' + type.type.name"
+        <div class="pokemon-card-inner">
+          <!-- カードヘッダー -->
+          <div class="card-header">
+            <span class="pokemon-number"
+              >No.{{ pokemon.id.toString().padStart(3, "0") }}</span
             >
-              {{ translateType(type.type.name) }}
-            </span>
+            <span class="pokemon-name">{{ pokemon.japaneseName }}</span>
+          </div>
+
+          <!-- イラスト枠 -->
+          <div class="card-artwork">
+            <img
+              :src="pokemon.sprites.front_default"
+              :alt="pokemon.japaneseName"
+            />
+          </div>
+
+          <!-- タイプバッジ部分 -->
+          <div class="card-footer">
+            <div class="pokemon-types">
+              <span
+                v-for="type in pokemon.types"
+                :key="type.slot"
+                :class="'type-badge type-' + type.type.name"
+              >
+                {{ translateType(type.type.name) }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -178,109 +196,125 @@ function translateType(type) {
   padding: 20px;
 }
 
+.pokemon-list h1 {
+  font-family: "DotGothic16", monospace;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: var(--gbc-green-dark);
+  text-shadow: 2px 2px 0px var(--gbc-green-light);
+}
+
 .search-container {
   margin-bottom: 20px;
 }
 
-.search-container input {
+.search-input {
   width: 100%;
   padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-gray-300);
   font-size: 16px;
+  transition: border-color var(--transition-fast);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
 }
 
 .pokemon-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 5px;
+  gap: 15px;
 }
 
-.pokemon-card {
-  background-color: #f5f5f5;
-  border-radius: 10px;
-  padding: 15px;
-  text-align: center;
-  cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
+/* シンプルなポケモンカード風スタイル */
+.pokemon-card-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.pokemon-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 6px 6px 0 0;
+  font-size: 0.65rem;
+  font-weight: bold;
+  border-bottom: 2px solid #d4d4d4;
 }
 
-.pokemon-info h3 {
-  margin: 10px 0 5px;
+.pokemon-number {
+  font-family: "DotGothic16", monospace;
+  font-size: 0.6rem;
+  color: #555;
+}
+
+.pokemon-name {
+  flex: 1;
+  font-family: "DotGothic16", monospace;
+  font-size: 0.75rem;
+  color: #000;
+}
+
+.card-artwork {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 6px;
+  padding: 8px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(245, 245, 245, 0.6) 100%
+  );
+  border: 4px solid #d4d4d4;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pokemon-card img {
+  width: 100%;
+  height: 100%;
+  max-width: 110px;
+  max-height: 110px;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+.card-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border-top: 2px solid #d4d4d4;
+  border-radius: 0 0 6px 6px;
 }
 
 .pokemon-types {
   display: flex;
-  justify-content: center;
-  gap: 5px;
-  margin-top: 5px;
+  gap: 4px;
 }
 
-.pokemon-types span {
-  padding: 3px 8px;
-  border-radius: 5px;
-  font-size: 12px;
+.type-badge {
+  font-family: "DotGothic16", monospace;
+  font-size: 0.65rem;
+  padding: 3px 10px;
+  border-radius: 12px;
   color: white;
+  font-weight: bold;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* タイプ別の色設定 */
-.type-normal {
-  background-color: #a8a878;
-}
-.type-fire {
-  background-color: #f08030;
-}
-.type-water {
-  background-color: #6890f0;
-}
-.type-electric {
-  background-color: #f8d030;
-}
-.type-grass {
-  background-color: #78c850;
-}
-.type-ice {
-  background-color: #98d8d8;
-}
-.type-fighting {
-  background-color: #c03028;
-}
-.type-poison {
-  background-color: #a040a0;
-}
-.type-ground {
-  background-color: #e0c068;
-}
-.type-flying {
-  background-color: #a890f0;
-}
-.type-psychic {
-  background-color: #f85888;
-}
-.type-bug {
-  background-color: #a8b820;
-}
-.type-rock {
-  background-color: #b8a038;
-}
-.type-ghost {
-  background-color: #705898;
-}
-.type-dragon {
-  background-color: #7038f8;
-}
-.type-dark {
-  background-color: #705848;
-}
-.type-steel {
-  background-color: #b8b8d0;
-}
-.type-fairy {
-  background-color: #ee99ac;
-}
+/* グローバルCSSのタイプスタイルを使用 */
 </style>
