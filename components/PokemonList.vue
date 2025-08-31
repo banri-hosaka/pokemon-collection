@@ -20,15 +20,20 @@
         <div class="pokemon-card-inner">
           <!-- カードヘッダー -->
           <div class="card-header">
-            <span class="pokemon-number">No.{{ pokemon.id.toString().padStart(3, "0") }}</span>
+            <span class="pokemon-number"
+              >No.{{ pokemon.id.toString().padStart(3, "0") }}</span
+            >
             <span class="pokemon-name">{{ pokemon.japaneseName }}</span>
           </div>
-          
+
           <!-- イラスト枠 -->
           <div class="card-artwork">
-            <img :src="pokemon.sprites.front_default" :alt="pokemon.japaneseName" />
+            <img
+              :src="pokemon.sprites.front_default"
+              :alt="pokemon.japaneseName"
+            />
           </div>
-          
+
           <!-- タイプバッジ部分 -->
           <div class="card-footer">
             <div class="pokemon-types">
@@ -184,31 +189,6 @@ function translateType(type) {
   };
   return typeMap[type] || type;
 }
-
-// タイプの絵文字を取得
-function getTypeEmoji(type) {
-  const emojiMap = {
-    normal: "⭐",
-    fire: "🔥",
-    water: "💧",
-    electric: "⚡",
-    grass: "🌿",
-    ice: "❄️",
-    fighting: "👊",
-    poison: "☠️",
-    ground: "⛰️",
-    flying: "🦅",
-    psychic: "🔮",
-    bug: "🐛",
-    rock: "🪨",
-    ghost: "👻",
-    dragon: "🐲",
-    dark: "🌙",
-    steel: "⚙️",
-    fairy: "✨",
-  };
-  return emojiMap[type] || "⭐";
-}
 </script>
 
 <style scoped>
@@ -217,7 +197,7 @@ function getTypeEmoji(type) {
 }
 
 .pokemon-list h1 {
-  font-family: 'DotGothic16', monospace;
+  font-family: "DotGothic16", monospace;
   font-size: 2rem;
   font-weight: bold;
   margin-bottom: 20px;
@@ -269,14 +249,14 @@ function getTypeEmoji(type) {
 }
 
 .pokemon-number {
-  font-family: 'DotGothic16', monospace;
+  font-family: "DotGothic16", monospace;
   font-size: 0.6rem;
   color: #555;
 }
 
 .pokemon-name {
   flex: 1;
-  font-family: 'DotGothic16', monospace;
+  font-family: "DotGothic16", monospace;
   font-size: 0.75rem;
   color: #000;
 }
@@ -326,14 +306,14 @@ function getTypeEmoji(type) {
 }
 
 .type-badge {
-  font-family: 'DotGothic16', monospace;
+  font-family: "DotGothic16", monospace;
   font-size: 0.65rem;
   padding: 3px 10px;
   border-radius: 12px;
   color: white;
   font-weight: bold;
-  text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* グローバルCSSのタイプスタイルを使用 */
