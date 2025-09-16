@@ -25,6 +25,7 @@ logs
 
 # Claude documentation
 CLAUDE.md
+.claude/
 
 # Documentation outputs
 docs/
