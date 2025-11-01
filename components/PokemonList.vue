@@ -98,53 +98,40 @@ const displayedPokemons = computed(() => {
   );
 });
 
-// 初期ポケモンデータの読み込み
+// 初期ポケモンデータの読み込み（ページネーションAPI使用）
 async function loadInitialPokemons() {
-  const loadedPokemons = [];
-
-  for (let i = 1; i <= itemsPerPage; i++) {
-    try {
-      const response = await fetch(`/api/pokemon/${i}`);
-      if (!response.ok) throw new Error("ポケモン取得に失敗しました");
-      const data = await response.json();
-      loadedPokemons.push(data);
-    } catch (err) {
-      console.error(`ポケモンID ${i} の取得中にエラー:`, err);
-    }
+  try {
+    const response = await fetch(`/api/pokemon?page=1&limit=${itemsPerPage}`);
+    if (!response.ok) throw new Error("ポケモン取得に失敗しました");
+    const { data, pagination } = await response.json();
+    pokemons.value = data;
+    isScrollListenerActive.value = pagination.hasNext;
+  } catch (err) {
+    console.error("初期ポケモン取得エラー:", err);
+    error.value = err.message;
   }
-
-  pokemons.value = loadedPokemons;
 }
 
-// 無限スクロール用の処理
+// 無限スクロール用の処理（ページネーションAPI使用）
 async function loadMorePokemons() {
   if (loading.value || !isScrollListenerActive.value) return;
 
   loading.value = true;
   currentPage.value++;
 
-  const startIndex = (currentPage.value - 1) * itemsPerPage + 1;
-  const endIndex = currentPage.value * itemsPerPage;
-
-  for (let i = startIndex; i <= endIndex; i++) {
-    try {
-      const response = await fetch(`/api/pokemon/${i}`);
-      if (!response.ok) {
-        // 404の場合はもうポケモンがない可能性が高いので、リスナーを無効化
-        if (response.status === 404) {
-          isScrollListenerActive.value = false;
-          break;
-        }
-        throw new Error("ポケモン取得に失敗しました");
-      }
-      const data = await response.json();
-      pokemons.value.push(data);
-    } catch (err) {
-      console.error(`ポケモンID ${i} の取得中にエラー:`, err);
-    }
+  try {
+    const response = await fetch(
+      `/api/pokemon?page=${currentPage.value}&limit=${itemsPerPage}`
+    );
+    if (!response.ok) throw new Error("ポケモン取得に失敗しました");
+    const { data, pagination } = await response.json();
+    pokemons.value.push(...data);
+    isScrollListenerActive.value = pagination.hasNext;
+  } catch (err) {
+    console.error(`ページ ${currentPage.value} の取得中にエラー:`, err);
+  } finally {
+    loading.value = false;
   }
-
-  loading.value = false;
 }
 
 // スクロールイベントハンドラ
