@@ -57,13 +57,18 @@
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 
+// 表示設定の定数
+const DISPLAY_CONFIG = {
+  ITEMS_PER_PAGE: 20,           // 1ページあたりのポケモン表示数
+  SCROLL_TRIGGER_OFFSET: 500,   // スクロール時の次ページ読み込みトリガー位置（px）
+};
+
 const router = useRouter();
 const pokemons = ref([]);
 const searchQuery = ref("");
 const loading = ref(true);
 const error = ref(null);
 const currentPage = ref(1);
-const itemsPerPage = 20;
 const isScrollListenerActive = ref(true);
 
 // ライフサイクルフック：コンポーネントのマウント時
@@ -101,14 +106,16 @@ const displayedPokemons = computed(() => {
 // 初期ポケモンデータの読み込み（ページネーションAPI使用）
 async function loadInitialPokemons() {
   try {
-    const response = await fetch(`/api/pokemon?page=1&limit=${itemsPerPage}`);
+    const response = await fetch(
+      `/api/pokemon?page=1&limit=${DISPLAY_CONFIG.ITEMS_PER_PAGE}`
+    );
     if (!response.ok) throw new Error("ポケモン取得に失敗しました");
     const { data, pagination } = await response.json();
     pokemons.value = data;
     isScrollListenerActive.value = pagination.hasNext;
   } catch (err) {
     console.error("初期ポケモン取得エラー:", err);
-    error.value = err.message;
+    error.value = err instanceof Error ? err.message : String(err);
   }
 }
 
@@ -121,7 +128,7 @@ async function loadMorePokemons() {
 
   try {
     const response = await fetch(
-      `/api/pokemon?page=${currentPage.value}&limit=${itemsPerPage}`
+      `/api/pokemon?page=${currentPage.value}&limit=${DISPLAY_CONFIG.ITEMS_PER_PAGE}`
     );
     if (!response.ok) throw new Error("ポケモン取得に失敗しました");
     const { data, pagination } = await response.json();
@@ -139,8 +146,9 @@ function handleScroll() {
   const scrollPosition = window.scrollY + window.innerHeight;
   const pageHeight = document.documentElement.scrollHeight;
 
+  // ページ下部に近づいたら次のページを読み込む
   if (
-    scrollPosition >= pageHeight - 500 &&
+    scrollPosition >= pageHeight - DISPLAY_CONFIG.SCROLL_TRIGGER_OFFSET &&
     !loading.value &&
     isScrollListenerActive.value
   ) {
