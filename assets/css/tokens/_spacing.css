@@ -1,0 +1,9 @@
+/**
+ * Spacing Tokens
+ */
+
+@layer base {
+  :root {
+    --radius-md: 0.375rem;
+  }
+}

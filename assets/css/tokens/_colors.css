@@ -1,0 +1,44 @@
+/**
+ * Color Tokens
+ */
+
+@layer base {
+  :root {
+    /* ゲームボーイカラー風パレット */
+    --gbc-green-light: #9BBC0F;
+    --gbc-green: #8BAC0F;
+    --gbc-green-dark: #306230;
+    --gbc-green-darkest: #0F380F;
+
+    /* プライマリカラー */
+    --color-primary: #8BAC0F;
+    --color-primary-hover: #306230;
+
+    /* グレースケール */
+    --color-gray-50: #F8E7C3;
+    --color-gray-200: #D7C4A0;
+    --color-gray-300: #B8A282;
+    --color-gray-400: #9A8262;
+    --color-gray-600: #5E4A35;
+
+    /* ポケモンタイプカラー */
+    --type-normal: #a8a878;
+    --type-fire: #f08030;
+    --type-water: #6890f0;
+    --type-electric: #f8d030;
+    --type-grass: #78c850;
+    --type-ice: #98d8d8;
+    --type-fighting: #c03028;
+    --type-poison: #a040a0;
+    --type-ground: #e0c068;
+    --type-flying: #a890f0;
+    --type-psychic: #f85888;
+    --type-bug: #a8b820;
+    --type-rock: #b8a038;
+    --type-ghost: #705898;
+    --type-dragon: #7038f8;
+    --type-dark: #705848;
+    --type-steel: #b8b8d0;
+    --type-fairy: #ee99ac;
+  }
+}

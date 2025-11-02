@@ -17,4 +17,15 @@ export default defineNuxtConfig({
     "@nuxt/test-utils",
     "@nuxt/ui",
   ],
+
+  app: {
+    head: {
+      link: [
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=DotGothic16&display=swap'
+        }
+      ]
+    }
+  },
 });

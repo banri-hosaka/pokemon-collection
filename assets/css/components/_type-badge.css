@@ -1,0 +1,69 @@
+/**
+ * Type Badge Component
+ */
+.type-badge {
+  font-family: 'DotGothic16', monospace;
+  font-size: 0.65rem;
+  padding: 3px 10px;
+  border-radius: 12px;
+  color: white;
+  font-weight: bold;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 各タイプの背景色 */
+.type-normal {
+  background-color: var(--type-normal);
+}
+.type-fire {
+  background-color: var(--type-fire);
+}
+.type-water {
+  background-color: var(--type-water);
+}
+.type-electric {
+  background-color: var(--type-electric);
+}
+.type-grass {
+  background-color: var(--type-grass);
+}
+.type-ice {
+  background-color: var(--type-ice);
+}
+.type-fighting {
+  background-color: var(--type-fighting);
+}
+.type-poison {
+  background-color: var(--type-poison);
+}
+.type-ground {
+  background-color: var(--type-ground);
+}
+.type-flying {
+  background-color: var(--type-flying);
+}
+.type-psychic {
+  background-color: var(--type-psychic);
+}
+.type-bug {
+  background-color: var(--type-bug);
+}
+.type-rock {
+  background-color: var(--type-rock);
+}
+.type-ghost {
+  background-color: var(--type-ghost);
+}
+.type-dragon {
+  background-color: var(--type-dragon);
+}
+.type-dark {
+  background-color: var(--type-dark);
+}
+.type-steel {
+  background-color: var(--type-steel);
+}
+.type-fairy {
+  background-color: var(--type-fairy);
+}

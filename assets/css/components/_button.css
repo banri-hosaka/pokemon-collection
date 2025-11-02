@@ -1,0 +1,18 @@
+/**
+ * Button Component
+ */
+
+.btn {
+  display: inline-block;
+  padding: var(--btn-padding-y) var(--btn-padding-x);
+  border-radius: var(--btn-radius);
+  color: var(--btn-color);
+  text-align: center;
+  text-decoration: none;
+  transition: background-color var(--transition-normal);
+  background-color: var(--btn-bg);
+}
+
+.btn:hover {
+  background-color: var(--btn-bg-hover);
+}

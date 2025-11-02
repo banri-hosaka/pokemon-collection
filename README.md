@@ -114,6 +114,89 @@ pokemon-collection/
     └── SOW_*.md        # 機能別仕様書
 ```
 
+## CSS Architecture
+
+このプロジェクトでは、**Tailwind v4 Design Tokens** を活用した保守性の高いCSS設計を採用しています。
+
+### 設計方針
+
+- **YAGNI原則**: 使用中のトークンとクラスのみを実装
+- **読み込み順序の最適化**: Design Tokens → Tailwind → Components の順で読み込み
+- **コンポーネント指向**: 各UIパーツを独立したCSSファイルで管理
+
+### ファイル構造
+
+```
+assets/css/
+├── tokens/              # Design Tokens (CSS変数)
+│   ├── _spacing.css     # 間隔・境界半径
+│   ├── _colors.css      # カラーパレット・タイプカラー
+│   ├── _components.css  # コンポーネントトークン
+│   └── index.css        # トークンのエントリーポイント
+├── components/          # コンポーネント固有のスタイル
+│   ├── _button.css      # ボタンコンポーネント (.btn)
+│   ├── _nav.css         # ナビゲーション (.navigation)
+│   ├── _pokemon-card.css # ポケモンカード (.pokemon-card)
+│   └── _type-badge.css  # タイプバッジ (.type-badge, .type-*)
+└── main.css             # メインエントリーポイント
+```
+
+### Design Tokens
+
+#### Spacing Tokens
+- `--radius-md`: 標準の角丸半径
+
+#### Color Tokens
+- `--gbc-green-*`: ゲームボーイカラー風パレット（4色）
+- `--color-primary-*`: プライマリカラー
+- `--color-gray-*`: グレースケール（5段階）
+- `--type-*`: ポケモンタイプカラー（18タイプ）
+
+#### Component Tokens
+- `--transition-*`: アニメーション速度
+- `--btn-*`: ボタン専用トークン
+
+### 主要コンポーネント
+
+#### Button (`.btn`)
+```html
+<NuxtLink to="/" class="btn">ポケモン図鑑</NuxtLink>
+```
+Design Tokensを使用した統一的なボタンスタイル。
+
+#### Pokemon Card (`.pokemon-card`)
+```html
+<div class="pokemon-card" :data-type="pokemon.types[0]?.type.name">
+  <div class="pokemon-card-inner">
+    <!-- カードコンテンツ -->
+  </div>
+</div>
+```
+タイプ別の背景グラデーション、ホバーエフェクト、キラキラアニメーションを実装。
+
+#### Type Badge (`.type-badge` + `.type-*`)
+```html
+<span class="type-badge type-fire">ほのお</span>
+```
+ポケモンタイプを表示するバッジ。18タイプすべてに対応。
+
+### 拡張方法
+
+#### 新しいトークンの追加
+1. 適切なトークンファイル (`_colors.css`, `_spacing.css` など) に変数を追加
+2. `:root` 内でCSS変数として定義
+
+#### 新しいコンポーネントの追加
+1. `assets/css/components/` に新しいファイルを作成
+2. コンポーネントクラスを直接定義（`@layer`は不要）
+3. `main.css` でインポート
+
+### 設計上の注意点
+
+- コンポーネントはTailwind読み込み後にインポートすることで優先度を確保
+- Scoped CSSと組み合わせて使用可能
+- Design Tokensを活用して一貫性を保つ
+
 ## データベース構成
 
 ### Vercel Storage (Prisma Postgres)
