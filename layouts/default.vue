@@ -2,8 +2,8 @@
   <div>
     <header>
       <nav class="navigation">
-        <NuxtLink to="/" class="nav-button">ポケモン図鑑</NuxtLink>
-        <NuxtLink to="/debug" class="nav-button">デバッグデモ</NuxtLink>
+        <NuxtLink to="/" class="btn">ポケモン図鑑</NuxtLink>
+        <NuxtLink to="/debug" class="btn">デバッグデモ</NuxtLink>
       </nav>
     </header>
     <main>
