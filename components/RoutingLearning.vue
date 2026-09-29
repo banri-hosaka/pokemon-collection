@@ -100,7 +100,7 @@ const pokemonId = route.params.id  // URLの[id]部分を取得</code></pre>
 const id = route.params.id
 const isValidNumber = /^\d+$/.test(id)
 const numericId = parseInt(id)
-const isInValidRange = numericId >= 1 && numericId <= 1010
+const isInValidRange = numericId &gt;= 1 &amp;&amp; numericId &lt;= 1010
 
 if (!isValidNumber || !isInValidRange) {
   // エラーハンドリング

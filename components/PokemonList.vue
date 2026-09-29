@@ -24,7 +24,6 @@
               >No.{{ pokemon.id.toString().padStart(3, "0") }}</span
             >
             <span class="pokemon-name">{{ pokemon.japaneseName }}</span>
-            <FavoriteButton :pokemonId="pokemon.id" />
           </div>
 
           <!-- イラスト枠 -->
