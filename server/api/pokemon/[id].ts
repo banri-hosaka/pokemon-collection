@@ -134,5 +134,10 @@ export default defineEventHandler(async (event) => {
         message: error.message || "サーバーエラーが発生しました",
       });
     }
+
+    throw createError({
+      statusCode: 500,
+      message: "サーバーエラーが発生しました",
+    });
   }
 });

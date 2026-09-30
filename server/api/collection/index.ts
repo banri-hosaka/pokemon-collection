@@ -15,15 +15,11 @@ export default defineEventHandler(async (event) => {
         orderBy: { pokemonId: "asc" },
       });
       return collection;
-    } catch (error) {
-      if (error instanceof Error) {
-        if ("code" in error && error.code === 500) {
-          throw createError({
-            statusCode: 500,
-            message: "コレクション取得中にエラーが発生しました",
-          });
-        }
-      }
+    } catch (_error) {
+      throw createError({
+        statusCode: 500,
+        message: "コレクション取得中にエラーが発生しました",
+      });
     }
   }
 
@@ -66,12 +62,19 @@ export default defineEventHandler(async (event) => {
             "statusCode" in error && typeof error.statusCode === "number"
               ? error.statusCode
               : 500,
-          message:
-            error instanceof Error
-              ? error.message
-              : "ポケモン追加中にエラーが発生しました",
+          message: error.message,
         });
       }
+
+      throw createError({
+        statusCode: 500,
+        message: "ポケモン追加中にエラーが発生しました",
+      });
     }
   }
+
+  throw createError({
+    statusCode: 405,
+    message: "Method Not Allowed",
+  });
 });

@@ -13,16 +13,20 @@ const PAGINATION_CONFIG = {
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
 
-  // ページとリミットのパラメータを取得してバリデーション
+  // ページとリミットのパラメータを取得してバリデーション（数値以外はデフォルト値）
+  const toInt = (value: unknown, fallback: number) => {
+    const parsed = parseInt(String(value));
+    return Number.isFinite(parsed) ? parsed : fallback;
+  };
   const page = Math.max(
     PAGINATION_CONFIG.MIN_PAGE,
-    parseInt(String(query.page || PAGINATION_CONFIG.DEFAULT_PAGE))
+    toInt(query.page, PAGINATION_CONFIG.DEFAULT_PAGE)
   );
   const limit = Math.min(
     PAGINATION_CONFIG.MAX_LIMIT,
     Math.max(
       PAGINATION_CONFIG.MIN_LIMIT,
-      parseInt(String(query.limit || PAGINATION_CONFIG.DEFAULT_LIMIT))
+      toInt(query.limit, PAGINATION_CONFIG.DEFAULT_LIMIT)
     )
   );
   const offset = (page - 1) * limit;

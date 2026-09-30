@@ -5,6 +5,13 @@ export default defineEventHandler(async (event) => {
   const id = Number(event.context.params?.id);
   const method = event.node.req.method;
 
+  if (!Number.isInteger(id) || id < 1) {
+    throw createError({
+      statusCode: 400,
+      message: "無効なコレクションIDです",
+    });
+  }
+
   // 存在確認
   const existingEntry = await prisma.pokemonCollection.findUnique({
     where: { id },
